@@ -1,0 +1,195 @@
+local Fluent = loadstring(game:HttpGet(
+    "https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"
+))()
+
+local SaveManager = loadstring(game:HttpGet(
+    "https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"
+))()
+
+local InterfaceManager = loadstring(game:HttpGet(
+    "https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"
+))()
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+-- WINDOW
+local Window = Fluent:CreateWindow({
+    Title = "Luna <3!",
+    SubTitle = "by Luna",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(580, 460),
+    Acrylic = true,
+    Theme = "Aqua",
+    MinimizeKey = Enum.KeyCode.LeftControl
+})
+
+-- TABS
+local Tabs = {
+    Main = Window:AddTab({
+        Title = "Camp Scripts",
+        Icon = "home"
+    }),
+
+    Teleports = Window:AddTab({
+        Title = "Teleports",
+        Icon = "map-pin"
+    }),
+
+    Settings = Window:AddTab({
+        Title = "Settings",
+        Icon = "settings"
+    })
+}
+
+-- NOTIFICATION FUNCTION
+local function notify(message)
+    Fluent:Notify({
+        Title = "Luna Scripts",
+        Content = message,
+        Duration = 4
+    })
+end
+
+notify("Luna Scripts loaded successfully!")
+
+-- =====================================
+-- CAMP SCRIPTS
+-- =====================================
+
+Tabs.Main:AddParagraph({
+    Title = "made by Luna",
+    Content = ""
+})
+
+-- WIN OBBY
+Tabs.Main:AddButton({
+    Title = "Win Obby",
+    Description = "Win The Obby !",
+
+    Callback = function()
+        loadstring(game:HttpGet(
+            "https://pastebin.com/raw/mzR8mnwm",
+            true
+        ))()
+    end
+})
+
+-- FIND STATUE
+Tabs.Main:AddButton({
+    Title = "Find Statue",
+    Description = "Find Statue And Bag.",
+
+    Callback = function()
+        loadstring(game:HttpGet(
+            "https://pastebin.com/raw/fWtNv5MT",
+            true
+        ))()
+    end
+})
+
+-- FLY GUI
+Tabs.Main:AddButton({
+    Title = "fly gui",
+    Description = "fly wowzerz",
+
+    Callback = function()
+        loadstring(game:HttpGet(
+            "https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"
+        ))()
+    end
+})
+
+-- =====================================
+-- TELEPORT FUNCTION
+-- =====================================
+
+local function teleportTo(position)
+    local character = player.Character
+
+    if not character then
+        notify("Character not found!")
+        return
+    end
+
+    local humanoid =
+        character:FindFirstChildOfClass("Humanoid")
+
+    if not humanoid or humanoid.Health <= 0 then
+        notify("You must be alive to teleport!")
+        return
+    end
+
+    character:PivotTo(
+        CFrame.new(position + Vector3.new(0, 3, 0))
+    )
+
+    return true
+end
+
+-- =====================================
+-- TELEPORT LOCATIONS
+-- =====================================
+
+local locations = {
+    {
+        Name = "Cabin 1",
+        Position = Vector3.new(119, -17, -402)
+    },
+    {
+        Name = "Cabin 2",
+        Position = Vector3.new(174, -16, -428)
+    },
+    {
+        Name = "Exile",
+        Position = Vector3.new(-118, -14, -154)
+    },
+    {
+        Name = "Spawn",
+        Position = Vector3.new(-49, -18, 56)
+    },
+    {
+        Name = "Campfire",
+        Position = Vector3.new(-31, 97, -501)
+    },
+    {
+        Name = "Cafeteria",
+        Position = Vector3.new(252, -10, -396)
+    }
+}
+
+-- CREATE TELEPORT BUTTONS
+for _, location in ipairs(locations) do
+    Tabs.Teleports:AddButton({
+        Title = "Teleport to " .. location.Name,
+        Description = "Teleport to " .. location.Name,
+
+        Callback = function()
+            if teleportTo(location.Position) then
+                notify("Teleported to " .. location.Name)
+            end
+        end
+    })
+end
+
+-- =====================================
+-- SETTINGS
+-- =====================================
+
+SaveManager:SetLibrary(Fluent)
+InterfaceManager:SetLibrary(Fluent)
+
+SaveManager:IgnoreThemeSettings()
+SaveManager:SetIgnoreIndexes({})
+
+InterfaceManager:SetFolder("LunaScripts")
+SaveManager:SetFolder("LunaScripts/TotalDrama")
+
+InterfaceManager:BuildInterfaceSection(Tabs.Settings)
+SaveManager:BuildConfigSection(Tabs.Settings)
+
+-- DEFAULT TAB
+Window:SelectTab(1)
+
+-- LOAD SAVED CONFIG
+SaveManager:LoadAutoloadConfig()
